@@ -1,10 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import { charactersApi } from "./api/charaters";
+import { accountApi } from "./api/account";
 
 export const store = configureStore({
   reducer: {
-    [charactersApi.reducerPath]: charactersApi.reducer,
+    [accountApi.reducerPath]: accountApi.reducer,
   },
 });
 

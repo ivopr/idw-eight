@@ -14,6 +14,7 @@ import { useForm, zodResolver } from "@mantine/form";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
 import { signIn } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -41,12 +42,15 @@ export default function Login(): JSX.Element {
       password: "",
     },
   });
+  const router = useRouter();
   const commonTL = useTranslation("common");
   const loginTL = useTranslation("login");
 
   const onSubmit = form.onSubmit(async ({ email, password }) => {
     // Handle your credentials login here
-    console.log({ email, password });
+    await signIn("credentials", { email, password, redirect: false, callbackUrl: "/" }).then(() =>
+      router.push("/account")
+    );
   });
 
   return (
@@ -77,15 +81,14 @@ export default function Login(): JSX.Element {
         </Button>
         <Divider mt="sm" label={loginTL.t("or-with")} labelPosition="center" />
         <form onSubmit={onSubmit}>
-          <TextInput disabled label={loginTL.t("fields.email")} {...form.getInputProps("email")} />
+          <TextInput label={loginTL.t("fields.email")} {...form.getInputProps("email")} />
           <PasswordInput
-            disabled
             mt="md"
             label={loginTL.t("fields.password")}
             {...form.getInputProps("password")}
           />
           <Checkbox disabled readOnly checked label={loginTL.t("fields.remember-me")} mt="md" />
-          <Button disabled type="submit" leftIcon={<LoginIcon size={18} />} fullWidth mt="xl">
+          <Button type="submit" leftIcon={<LoginIcon size={18} />} fullWidth mt="xl">
             {loginTL.t("title")}
           </Button>
         </form>

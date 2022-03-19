@@ -6,7 +6,7 @@ import {
 } from "@mantine/core";
 import { useSession } from "next-auth/react";
 import React from "react";
-import { Home, User, Users } from "tabler-icons-react";
+import { Home, User } from "tabler-icons-react";
 
 import { LinksGroup } from "./links-group";
 
@@ -57,7 +57,6 @@ export function Navbar({ onClose, ...rest }: NavbarProps): JSX.Element {
 
   const mockdata = [
     { label: "Home", icon: Home, link: "/" },
-    { label: "Characters", icon: Users, link: "/characters" },
     {
       label: "Account",
       initiallyOpened: false,

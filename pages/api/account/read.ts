@@ -1,22 +1,15 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { User } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
-
-type Data = {
-  name?: string;
-};
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data[] | { message: string }>
+  res: NextApiResponse<User[] | { message: string } | undefined>
 ): Promise<void> {
   if (req.method === "GET") {
-    return res
-      .status(200)
-      .json([
-        { name: "Monkey D. Luffy" },
-        { name: "Portgas D. Funto" },
-        { name: "Sabo D. Saparecido" },
-      ]);
+    const accounts = await prisma?.user.findMany();
+
+    return res.status(201).json(accounts);
   }
   return res.status(405).json({
     message: `You can't ${req.method} this route.`,

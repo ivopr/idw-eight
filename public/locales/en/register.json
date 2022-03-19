@@ -1,7 +1,10 @@
 {
 	"fields": {
 		"email": "Email",
-		"password": "Password"
+		"name": "Name",
+		"password": "Password",
+		"role": "Role",
+		"role-check": "Role Check"
 	},
 	"is-registered": "Already have an account?",
 	"login": "Login",
