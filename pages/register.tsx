@@ -37,6 +37,9 @@ const RegisterSchema = z.object({
     .min(5, { message: "Your password must be at least 5 characters long" }),
   role: z.string().nonempty({ message: "You must have a role" }),
   roleGuard: z.string(),
+  cnpj: z.string(),
+  phone: z.string(),
+  address: z.string(),
 });
 
 export default function Register(): JSX.Element {
@@ -49,6 +52,9 @@ export default function Register(): JSX.Element {
       password: "",
       role: "USER",
       roleGuard: "",
+      address: "",
+      cnpj: "",
+      phone: "",
     },
   });
   const notifications = useNotifications();
@@ -57,27 +63,29 @@ export default function Register(): JSX.Element {
   const commonTL = useTranslation("common");
   const registerTL = useTranslation("register");
 
-  const onSubmit = form.onSubmit(async ({ email, name, password, role, roleGuard }) => {
-    // Handle your credentials register here
-    await createAccount({ email, name, password, role, roleGuard })
-      .unwrap()
-      .then(async (data) => {
-        notifications.showNotification({
-          message: `Created account for ${data.name}`,
-          color: "green",
-        });
+  const onSubmit = form.onSubmit(
+    async ({ email, name, password, role, roleGuard, address, cnpj, phone }) => {
+      // Handle your credentials register here
+      await createAccount({ email, name, password, role, roleGuard, address, cnpj, phone })
+        .unwrap()
+        .then(async (data) => {
+          notifications.showNotification({
+            message: `Created account for ${data.name}`,
+            color: "green",
+          });
 
-        await signIn("credentials", { email, password, redirect: false }).then(() =>
-          router.push("/account")
-        );
-      })
-      .catch(() => {
-        notifications.showNotification({
-          message: `Account not created`,
-          color: "red",
+          await signIn("credentials", { email, password, redirect: false }).then(() =>
+            router.push("/account")
+          );
+        })
+        .catch(() => {
+          notifications.showNotification({
+            message: `Account not created`,
+            color: "red",
+          });
         });
-      });
-  });
+    }
+  );
 
   return (
     <Container size="xs">
@@ -113,12 +121,31 @@ export default function Register(): JSX.Element {
             {...form.getInputProps("password")}
           />
           <Select
-            data={["USER", "VIP_USER", "ADMIN"]}
+            data={["USER", "PROVIDER", "ADMIN"]}
             label={registerTL.t("fields.role")}
             mt="md"
             {...form.getInputProps("role")}
           />
-          {form.values.role !== "USER" && (
+          {form.values.role === "PROVIDER" && (
+            <>
+              <TextInput
+                label={registerTL.t("fields.cnpj")}
+                mt="md"
+                {...form.getInputProps("cnpj")}
+              />
+              <TextInput
+                label={registerTL.t("fields.phone")}
+                mt="md"
+                {...form.getInputProps("phone")}
+              />
+              <TextInput
+                label={registerTL.t("fields.address")}
+                mt="md"
+                {...form.getInputProps("address")}
+              />
+            </>
+          )}
+          {form.values.role === "ADMIN" && (
             <TextInput
               label={registerTL.t("fields.role-check")}
               mt="md"

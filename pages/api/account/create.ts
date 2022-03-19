@@ -3,12 +3,17 @@ import { User } from "@prisma/client";
 import { hash } from "bcryptjs";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import { prisma } from "../../../services/prisma";
+
 type AccountCredentials = {
   name: string;
   email: string;
   password: string;
-  role: "USER" | "VIP_USER" | "ADMIN";
-  roleGuard: string;
+  role: "USER" | "PROVIDER" | "ADMIN";
+  roleGuard?: string;
+  cnpj?: string;
+  address?: string;
+  phone?: string;
 };
 
 export default async function handler(
@@ -30,7 +35,7 @@ export default async function handler(
       return res.status(400).json({ message: "already-exists" });
     }
 
-    if (accountCredentials.role !== "USER") {
+    if (accountCredentials.role === "ADMIN") {
       if (accountCredentials.roleGuard !== "check") {
         return res.status(401).json({ message: "no-permission" });
       }
@@ -42,6 +47,9 @@ export default async function handler(
         password,
         name: accountCredentials.name,
         role: accountCredentials.role,
+        cnpj: accountCredentials.cnpj,
+        address: accountCredentials.phone,
+        phone: accountCredentials.phone,
       },
     });
 

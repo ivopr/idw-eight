@@ -6,7 +6,7 @@ import {
 } from "@mantine/core";
 import { useSession } from "next-auth/react";
 import React from "react";
-import { Home, User } from "tabler-icons-react";
+import { Box, Home, User } from "tabler-icons-react";
 
 import { LinksGroup } from "./links-group";
 
@@ -53,10 +53,12 @@ type NavbarProps = Omit<MantineNavbarProps, "children"> & {
 };
 
 export function Navbar({ onClose, ...rest }: NavbarProps): JSX.Element {
-  const { status } = useSession();
+  const { status, data } = useSession();
 
   const mockdata = [
     { label: "Home", icon: Home, link: "/" },
+    data?.role === "ADMIN" && { label: "(ADMIN) Products", icon: Box, link: "/products" },
+    data?.role === "ADMIN" && { label: "(ADMIN) Users", icon: Box, link: "/users" },
     {
       label: "Account",
       initiallyOpened: false,
@@ -72,7 +74,11 @@ export function Navbar({ onClose, ...rest }: NavbarProps): JSX.Element {
   ];
 
   const { classes } = useStyles();
-  const links = mockdata.map((item) => <LinksGroup onClose={onClose} {...item} key={item.label} />);
+  const links = mockdata.map(
+    (item) =>
+      item !== undefined &&
+      item !== false && <LinksGroup onClose={onClose} {...item} key={item.label} />
+  );
 
   return (
     <MantineNavbar className={classes.navbar} {...rest}>

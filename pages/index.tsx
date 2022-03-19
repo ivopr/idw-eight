@@ -1,6 +1,7 @@
 import { Container, List, Text, Title } from "@mantine/core";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
+import { getSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
@@ -42,8 +43,11 @@ export default function Home(): JSX.Element {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getSession({ ctx: context });
+
   return {
     props: {
+      session,
       ...(await serverSideTranslations(context.locale ?? "en", ["common", "index"])),
     },
   };

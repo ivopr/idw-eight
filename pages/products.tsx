@@ -1,28 +1,25 @@
-import { Avatar, Button, Container, Group, Paper, SimpleGrid, Text, Title } from "@mantine/core";
+import { Button, Container, Group, Paper, SimpleGrid, Text, Title } from "@mantine/core";
 import { useNotifications } from "@mantine/notifications";
 import { Product } from "@prisma/client";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
-import { useRouter } from "next/router";
-import { getSession, signOut, useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { Logout, Trash } from "tabler-icons-react";
+import { Trash } from "tabler-icons-react";
 
-import { CreateProductModal } from "../components/create-product-modal/create-product-modal";
 import { EditProductModal } from "../components/edit-product-modal/edit-product-modal";
 import { Loader } from "../components/loader";
-import { withSSRAuth } from "../hocs/with-ssr-auth";
-import { useDeleteProductMutation, useGetMyProductsQuery } from "../store/api/product";
+import { withSSRAdmin } from "../hocs/with-ssr-admin";
+import { useDeleteProductMutation, useGetAllProductsQuery } from "../store/api/product";
 
-export default function Account(): JSX.Element {
+export default function Producs(): JSX.Element {
   const { data } = useSession();
-  const { data: products, refetch } = useGetMyProductsQuery(data?.user?.email as string);
+  const { data: products, refetch } = useGetAllProductsQuery(null);
   const [deleteProduct] = useDeleteProductMutation();
-  const router = useRouter();
   const notifications = useNotifications();
-  const accountTL = useTranslation("account");
   const commonTL = useTranslation("common");
+  const productsTL = useTranslation("products");
 
   const onDelete = async (id: string): Promise<void> => {
     await deleteProduct(id)
@@ -47,23 +44,12 @@ export default function Account(): JSX.Element {
     <Container size="md">
       <Head>
         <title>
-          {data.user?.name} &bull; {commonTL.t("app-name")}
+          {productsTL.t("title")} &bull; {commonTL.t("app-name")}
         </title>
       </Head>
-      <Avatar mb="sm" mx="auto" size="xl" src={data.user?.image} />
-      <Text align="center">{accountTL.t("welcome")}</Text>
       <Title align="center" sx={(theme) => ({ color: theme.colors[theme.primaryColor][3] })}>
-        {data?.user?.name}
+        {productsTL.t("title")}
       </Title>
-      <Button
-        fullWidth
-        leftIcon={<Logout size={18} />}
-        my="md"
-        onClick={() => signOut({ redirect: false }).then(() => router.push("/login"))}
-      >
-        {accountTL.t("logout")}
-      </Button>
-      {data.role === "PROVIDER" && <CreateProductModal />}
       {products &&
         products?.length > 0 &&
         products?.map((prod: Product) => (
@@ -72,15 +58,15 @@ export default function Account(): JSX.Element {
               breakpoints={[
                 { maxWidth: "sm", cols: 1 },
                 { maxWidth: "md", cols: 2 },
-                { minWidth: "md", cols: 5 },
+                { minWidth: "md", cols: 4 },
               ]}
             >
               <Group direction="column" spacing={0}>
-                <Text color="dimmed">{accountTL.t("name")}</Text>
+                <Text color="dimmed">{productsTL.t("modal.name")}</Text>
                 <Text>{prod.name}</Text>
               </Group>
               <Group direction="column" spacing={0}>
-                <Text color="dimmed">{accountTL.t("modal.price")}</Text>
+                <Text color="dimmed">{productsTL.t("modal.price")}</Text>
                 <Text>
                   {Intl.NumberFormat("pt-BR", {
                     currency: "BRL",
@@ -89,16 +75,21 @@ export default function Account(): JSX.Element {
                 </Text>
               </Group>
               <Group direction="column" spacing={0}>
-                <Text color="dimmed">{accountTL.t("modal.quantity")}</Text>
+                <Text color="dimmed">{productsTL.t("modal.quantity")}</Text>
                 <Text>{prod.quantity}</Text>
               </Group>
               <Group direction="column" spacing={0}>
-                <Text color="dimmed">{accountTL.t("modal.type")}</Text>
+                <Text color="dimmed">{productsTL.t("modal.type")}</Text>
                 <Text>{prod.type}</Text>
               </Group>
 
               <Group direction="column" spacing={0}>
-                <Text color="dimmed">{accountTL.t("actions")}</Text>
+                <Text color="dimmed">{productsTL.t("modal.provider")}</Text>
+                <Text>{prod.providerEmail}</Text>
+              </Group>
+
+              <Group direction="column" spacing={0}>
+                <Text color="dimmed">{productsTL.t("actions")}</Text>
                 <Group align="baseline" spacing="xs">
                   <EditProductModal product={prod} />
                   <Button color="red" onClick={() => onDelete(prod.id)}>
@@ -113,13 +104,13 @@ export default function Account(): JSX.Element {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = withSSRAuth(async (context) => {
+export const getServerSideProps: GetServerSideProps = withSSRAdmin(async (context) => {
   const session = await getSession(context);
 
   return {
     props: {
       session,
-      ...(await serverSideTranslations(context.locale ?? "en", ["account", "common", "products"])),
+      ...(await serverSideTranslations(context.locale ?? "en", ["common", "products"])),
     },
   };
 });

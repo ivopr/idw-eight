@@ -38,7 +38,7 @@ model Session {
 }
 enum ROLE {
   ADMIN
-  VIP_USER
+  PROVIDER
   USER
 }
 
@@ -48,10 +48,26 @@ model User {
   email         String?   @unique
   password      String?
   role          ROLE @default(USER)
+  cnpj          String?
+  phone         String?
+  address       String?
   emailVerified DateTime?
   image         String?
+  createdAt     DateTime @default(now())
+  products      Product[]
   accounts      Account[]
   sessions      Session[]
+}
+
+model Product {
+  id            String    @id @default(cuid())
+  name          String
+  price         Int
+  quantity      Int? @default(0)
+  type          String?
+  providerEmail String
+  provider      User @relation(fields: [providerEmail], references: [email])
+  createdAt     DateTime  @default(now())
 }
 
 model VerificationToken {

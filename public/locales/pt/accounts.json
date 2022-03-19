@@ -1,0 +1,13 @@
+{
+	"actions": "Ações",
+	"modal": {
+		"address": "Endereço",
+		"cnpj": "CNPJ",
+		"email": "Email",
+		"name": "Nome",
+		"phone": "Telefone",
+		"role": "Cargo",
+		"title": "Editar Conta"
+	},
+	"title": "Contas"
+}

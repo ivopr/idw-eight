@@ -15,13 +15,44 @@ export const accountApi = createApi({
     }),
     postCreateAccount: builder.mutation<
       User,
-      { email: string; name: string; password: string; role: string; roleGuard?: string }
+      {
+        email: string;
+        name: string;
+        password: string;
+        role: string;
+        roleGuard?: string;
+        cnpj?: string;
+        address?: string;
+        phone?: string;
+      }
     >({
       query: (body) => ({ url: "create", body, method: "POST" }),
+    }),
+    deleteAccount: builder.mutation<{ message: string }, string>({
+      query: (accountId) => ({ url: `delete?accountId=${accountId}`, method: "DELETE" }),
+    }),
+    putUpdateAccount: builder.mutation<
+      User,
+      {
+        id: string;
+        name: string;
+        email: string;
+        role: string;
+        cnpj?: string;
+        address?: string;
+        phone?: string;
+      }
+    >({
+      query: (body) => ({ url: `update?userId=${body.id}`, body, method: "PUT" }),
     }),
   }),
 });
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetAllAccountsQuery, usePostCreateAccountMutation } = accountApi;
+export const {
+  useGetAllAccountsQuery,
+  usePostCreateAccountMutation,
+  useDeleteAccountMutation,
+  usePutUpdateAccountMutation,
+} = accountApi;

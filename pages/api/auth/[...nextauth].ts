@@ -25,10 +25,23 @@ export default NextAuth({
 
       return token;
     },
-    session: ({ token, session }) => {
+    session: async ({ token, session }) => {
       if (token) {
         session.id = token.id;
         session.role = token.role;
+
+        const products = (
+          await prisma.user.findFirst({
+            where: {
+              id: token.id as string,
+            },
+            include: {
+              products: true,
+            },
+          })
+        )?.products;
+
+        session.products = products;
       }
 
       return session;

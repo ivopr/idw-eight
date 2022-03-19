@@ -2,12 +2,14 @@
 import { User } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import { prisma } from "../../../services/prisma";
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<User[] | { message: string } | undefined>
 ): Promise<void> {
   if (req.method === "GET") {
-    const accounts = await prisma?.user.findMany();
+    const accounts = await prisma.user.findMany();
 
     return res.status(201).json(accounts);
   }
