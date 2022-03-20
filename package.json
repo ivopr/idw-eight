@@ -28,6 +28,8 @@
     "@reduxjs/toolkit": "^1.8.0",
     "bcryptjs": "^2.4.3",
     "dayjs": "1.10.8",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.23",
     "next": "12.1.0",
     "next-auth": "^4.2.1",
     "next-i18next": "^10.5.0",

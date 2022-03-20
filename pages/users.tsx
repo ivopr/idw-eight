@@ -9,6 +9,7 @@ import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { Trash } from "tabler-icons-react";
 
 import { EditUserModal } from "../components/edit-account-modal/edit-account-modal";
+import { generateUsersReport } from "../components/report-generator";
 import { withSSRAdmin } from "../hocs/with-ssr-admin";
 import { useDeleteAccountMutation, useGetAllAccountsQuery } from "../store/api/account";
 
@@ -42,7 +43,9 @@ export default function Characters(): JSX.Element {
         </title>
       </Head>
       <Title>{accountsTL.t("title")}</Title>
-
+      <Button fullWidth onClick={() => generateUsersReport(accounts as User[])}>
+        {accountsTL.t("report")}
+      </Button>
       {accounts &&
         accounts?.length > 0 &&
         accounts?.map((user: User) => (

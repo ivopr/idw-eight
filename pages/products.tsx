@@ -10,6 +10,7 @@ import { Trash } from "tabler-icons-react";
 
 import { EditProductModal } from "../components/edit-product-modal/edit-product-modal";
 import { Loader } from "../components/loader";
+import { generateProductsReport } from "../components/report-generator";
 import { withSSRAdmin } from "../hocs/with-ssr-admin";
 import { useDeleteProductMutation, useGetAllProductsQuery } from "../store/api/product";
 
@@ -50,6 +51,9 @@ export default function Producs(): JSX.Element {
       <Title align="center" sx={(theme) => ({ color: theme.colors[theme.primaryColor][3] })}>
         {productsTL.t("title")}
       </Title>
+      <Button fullWidth onClick={() => generateProductsReport(products as Product[])}>
+        {productsTL.t("report")}
+      </Button>
       {products &&
         products?.length > 0 &&
         products?.map((prod: Product) => (

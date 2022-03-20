@@ -1,5 +1,6 @@
 {
 	"actions": "Actions",
+	"report": "Report",
 	"title": "Products",
 	"modal": {
 		"title": "Edit Product",
