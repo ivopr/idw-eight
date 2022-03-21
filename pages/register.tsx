@@ -98,7 +98,9 @@ export default function Register(): JSX.Element {
       <Text color="dimmed" size="sm" align="center" mt={5}>
         {registerTL.t("is-registered")}
         <NextLink href="/login" passHref>
-          <Anchor<"a"> size="sm">{registerTL.t("login")}</Anchor>
+          <Anchor<"a"> ml={3} size="sm">
+            {registerTL.t("login")}
+          </Anchor>
         </NextLink>
       </Text>
 

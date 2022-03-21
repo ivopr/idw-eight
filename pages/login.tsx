@@ -86,7 +86,9 @@ export default function Login(): JSX.Element {
       <Text color="dimmed" size="sm" align="center" mt={5}>
         {loginTL.t("is-unregistered")}
         <NextLink href="/register" passHref>
-          <Anchor<"a"> size="sm">{loginTL.t("register-now")}</Anchor>
+          <Anchor<"a"> ml={3} size="sm">
+            {loginTL.t("register-now")}
+          </Anchor>
         </NextLink>
       </Text>
 

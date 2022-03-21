@@ -30,6 +30,10 @@ export default async function handler(
       return res.status(401).json({ message: "unauthorized" });
     }
 
+    if (accountId === session.id) {
+      return res.status(401).json({ message: "cannot-delete-yourself" });
+    }
+
     await prisma.user.delete({
       where: {
         id: accountId as string,
