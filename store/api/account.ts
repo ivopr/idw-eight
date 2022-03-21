@@ -31,6 +31,9 @@ export const accountApi = createApi({
     deleteAccount: builder.mutation<{ message: string }, string>({
       query: (accountId) => ({ url: `delete?accountId=${accountId}`, method: "DELETE" }),
     }),
+    toggleAccountActive: builder.mutation<{ message: string }, string>({
+      query: (accountId) => ({ url: `toggle-active?accountId=${accountId}`, method: "POST" }),
+    }),
     putUpdateAccount: builder.mutation<
       User,
       {
@@ -54,5 +57,6 @@ export const {
   useGetAllAccountsQuery,
   usePostCreateAccountMutation,
   useDeleteAccountMutation,
+  useToggleAccountActiveMutation,
   usePutUpdateAccountMutation,
 } = accountApi;

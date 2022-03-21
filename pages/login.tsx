@@ -11,6 +11,7 @@ import {
   Title,
 } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
+import { useNotifications } from "@mantine/notifications";
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import NextLink from "next/link";
@@ -42,15 +43,34 @@ export default function Login(): JSX.Element {
       password: "",
     },
   });
+  const notifications = useNotifications();
   const router = useRouter();
   const commonTL = useTranslation("common");
   const loginTL = useTranslation("login");
 
   const onSubmit = form.onSubmit(async ({ email, password }) => {
     // Handle your credentials login here
-    await signIn("credentials", { email, password, redirect: false, callbackUrl: "/" }).then(() =>
-      router.push("/account")
-    );
+    await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+      callbackUrl: "/",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }).then((res: any) => {
+      if (res?.error === null) {
+        notifications.showNotification({
+          message: "Logged in",
+          color: "green",
+        });
+        router.push("/account");
+      } else {
+        notifications.showNotification({
+          message: "There was an error in your login or your account isn't active",
+          autoClose: 5000,
+          color: "red",
+        });
+      }
+    });
   });
 
   return (

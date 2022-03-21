@@ -82,6 +82,7 @@ export function EditProductModal({ product }: EditProductModal): JSX.Element {
           <NumberInput
             label={productsTL.t("modal.price")}
             mt="md"
+            parser={(value) => value?.replace(/\D+/g, "")}
             formatter={(value) =>
               !Number.isNaN(Number(value))
                 ? Intl.NumberFormat("pt-BR", {

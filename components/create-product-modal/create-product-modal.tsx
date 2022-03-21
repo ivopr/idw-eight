@@ -67,8 +67,10 @@ export function CreateProductModal(): JSX.Element {
         <form onSubmit={onSubmit}>
           <TextInput label={accountTL.t("modal.name")} {...form.getInputProps("name")} />
           <NumberInput
+            hideControls
             label={accountTL.t("modal.price")}
             mt="md"
+            parser={(value) => value?.replace(/\D+/g, "")}
             formatter={(value) =>
               !Number.isNaN(Number(value))
                 ? Intl.NumberFormat("pt-BR", {

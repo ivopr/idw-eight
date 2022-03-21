@@ -54,6 +54,7 @@ model User {
   emailVerified DateTime?
   image         String?
   createdAt     DateTime @default(now())
+  active        Boolean @default(true)
   products      Product[]
   accounts      Account[]
   sessions      Session[]
@@ -66,7 +67,7 @@ model Product {
   quantity      Int? @default(0)
   type          String?
   providerEmail String
-  provider      User @relation(fields: [providerEmail], references: [email])
+  provider      User @relation(fields: [providerEmail], references: [email], onDelete: Cascade)
   createdAt     DateTime  @default(now())
 }
 

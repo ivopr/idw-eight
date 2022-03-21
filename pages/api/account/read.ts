@@ -11,6 +11,24 @@ export default async function handler(
   if (req.method === "GET") {
     const accounts = await prisma.user.findMany();
 
+    if (accounts.length > 0) {
+      accounts.sort((a, b) => {
+        if (a.name === null || b.name === null) {
+          return 0;
+        }
+
+        if (a.name < b.name) {
+          return -1;
+        }
+
+        if (a.name > b.name) {
+          return 1;
+        }
+
+        return 0;
+      });
+    }
+
     return res.status(201).json(accounts);
   }
   return res.status(405).json({

@@ -29,19 +29,6 @@ export default NextAuth({
       if (token) {
         session.id = token.id;
         session.role = token.role;
-
-        const products = (
-          await prisma.user.findFirst({
-            where: {
-              id: token.id as string,
-            },
-            include: {
-              products: true,
-            },
-          })
-        )?.products;
-
-        session.products = products;
       }
 
       return session;
@@ -66,6 +53,10 @@ export default NextAuth({
         });
 
         if (!account) {
+          return null;
+        }
+
+        if (!account.active) {
           return null;
         }
 

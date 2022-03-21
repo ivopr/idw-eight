@@ -6,16 +6,21 @@ import Head from "next/head";
 import { getSession } from "next-auth/react";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { Trash } from "tabler-icons-react";
+import { Key, Trash } from "tabler-icons-react";
 
 import { EditUserModal } from "../components/edit-account-modal/edit-account-modal";
 import { generateUsersReport } from "../components/report-generator";
 import { withSSRAdmin } from "../hocs/with-ssr-admin";
-import { useDeleteAccountMutation, useGetAllAccountsQuery } from "../store/api/account";
+import {
+  useDeleteAccountMutation,
+  useGetAllAccountsQuery,
+  useToggleAccountActiveMutation,
+} from "../store/api/account";
 
 export default function Characters(): JSX.Element {
   const { data: accounts, refetch } = useGetAllAccountsQuery(null);
   const [deleteAccount] = useDeleteAccountMutation();
+  const [toggleAccountActive] = useToggleAccountActiveMutation();
   const notifications = useNotifications();
   const accountsTL = useTranslation("accounts");
   const commonTL = useTranslation("common");
@@ -35,6 +40,29 @@ export default function Characters(): JSX.Element {
       });
   };
 
+  const onToggleActive = async (id: string): Promise<void> => {
+    await toggleAccountActive(id)
+      .unwrap()
+      .then((res) => {
+        if (res.message === "toggled") {
+          notifications.showNotification({
+            message: "Account activated/deactivated",
+            color: "green",
+          });
+
+          refetch();
+        }
+      })
+      .catch((res) => {
+        if (res.data.message === "cannot-deactivate-yourself") {
+          notifications.showNotification({
+            message: "You can't deactivate yourself",
+            color: "yellow",
+          });
+        }
+      });
+  };
+
   return (
     <Container size="md">
       <Head>
@@ -48,7 +76,7 @@ export default function Characters(): JSX.Element {
       </Button>
       {accounts &&
         accounts?.length > 0 &&
-        accounts?.map((user: User) => (
+        accounts.map((user: User) => (
           <Paper key={user.id} withBorder my="xs" p="md">
             <SimpleGrid
               breakpoints={[
@@ -69,10 +97,15 @@ export default function Characters(): JSX.Element {
                 <Text color="dimmed">{accountsTL.t("modal.role")}</Text>
                 <Text>{user.role}</Text>
               </Group>
-
               <Group direction="column" spacing={0}>
                 <Text color="dimmed">{accountsTL.t("actions")}</Text>
                 <Group align="baseline" spacing="xs">
+                  <Button
+                    color={user.active ? "blue" : "gray"}
+                    onClick={() => onToggleActive(user.id)}
+                  >
+                    <Key />
+                  </Button>
                   <EditUserModal user={user} />
                   <Button color="red" onClick={() => onDelete(user.id)}>
                     <Trash />
